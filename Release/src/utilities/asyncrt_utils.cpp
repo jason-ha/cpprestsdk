@@ -16,9 +16,14 @@
 #include <cpprest/asyncrt_utils.h>
 
 #include <algorithm>
+#include <cstring>
 #include <stdexcept>
 #include <string>
 #include <time.h>
+
+#if defined(_WIN32)
+#include "windows_config.h"
+#endif
 
 using namespace utility;
 
@@ -302,7 +307,7 @@ utility::string_t datetime::to_string(date_format format) const
                     leftover);
 #endif // _MSC_VER
             outCursor += 25;
-            memcpy(outCursor, " GMT", 4);
+            std::memcpy(outCursor, " GMT", 4);
             outCursor += 4;
             return utility::string_t(outBuffer, outCursor);
         case ISO_8601:

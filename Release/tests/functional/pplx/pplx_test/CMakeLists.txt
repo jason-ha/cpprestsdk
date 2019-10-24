@@ -4,6 +4,6 @@ set(SOURCES
   pplxtask_tests.cpp
 )
 
-add_casablanca_test(pplx_test SOURCES)
+add_casablanca_test(pplx_test SOURCES cpprest_pplx)
 
 configure_pch(pplx_test stdafx.h stdafx.cpp)
