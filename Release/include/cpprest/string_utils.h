@@ -24,10 +24,13 @@
 #ifndef _WIN32
 #include <sys/time.h>
 #if !defined(ANDROID) && !defined(__ANDROID__) && defined(HAVE_XLOCALE_H) // CodePlex 269
+#if !defined(__EMSCRIPTEN__) // Emscripten does not support multiple locales https://github.com/emscripten-core/emscripten/issues/2630
+#define CPPRESTSDK_STRING_UTILS_LOCALE_SUPPORTED 1
 /* Systems using glibc: xlocale.h has been removed from glibc 2.26
    The above include of locale.h is sufficient
    Further details: https://sourceware.org/git/?p=glibc.git;a=commit;h=f0be25b6336db7492e47d2e8e72eb8af53b5506d */
 #include <xlocale.h>
+#endif
 #endif
 #endif
 
@@ -207,7 +210,7 @@ inline utility::string_t print_string(const utility::string_t& val) { return val
 
 namespace details
 {
-#if defined(__ANDROID__)
+#if !defined(CPPRESTSDK_STRING_UTILS_LOCALE_SUPPORTED)
 template<class T>
 inline std::string to_string(const T t)
 {
@@ -225,7 +228,7 @@ inline utility::string_t to_string_t(const T t)
     using std::to_wstring;
     return to_wstring(t);
 #else
-#if !defined(__ANDROID__)
+#if defined(CPPRESTSDK_STRING_UTILS_LOCALE_SUPPORTED)
     using std::to_string;
 #endif
     return to_string(t);
@@ -306,7 +309,7 @@ public:
     _ASYNCRTIMP scoped_c_thread_locale();
     _ASYNCRTIMP ~scoped_c_thread_locale();
 
-#if !defined(ANDROID) && !defined(__ANDROID__) // CodePlex 269
+#if defined(CPPRESTSDK_STRING_UTILS_LOCALE_SUPPORTED)
 #ifdef _WIN32
     typedef _locale_t xplat_locale;
 #else
@@ -319,7 +322,7 @@ private:
 #ifdef _WIN32
     std::string m_prevLocale;
     int m_prevThreadSetting;
-#elif !(defined(ANDROID) || defined(__ANDROID__))
+#elif defined(CPPRESTSDK_STRING_UTILS_LOCALE_SUPPORTED)
     locale_t m_prevLocale;
 #endif
     scoped_c_thread_locale(const scoped_c_thread_locale&);
